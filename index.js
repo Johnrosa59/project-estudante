@@ -8,29 +8,29 @@ const students = [];
 
 app.use(express.json());
 
-const checkStudentId = (req, res, next) => {
-  const { id } = req.params;
+const checkStudentId = (request, response, next) => {
+  const { id } = request.params;
 
   const index = students.findIndex((student) => student.id === id);
 
   if (index < 0) {
-    return res.status(404).json({ error: "User not found" });
+    return response.status(404).json({ error: "user not found" });
   }
 
-  req.studentId = id;
-  req.studentIndex = index;
+  request.studentIndex = index;
+  request.studentId = id;
 
   next();
 };
 
 // To List Students
-app.get("/students", (req, res) => {
-  return res.status(200).json(students);
+app.get("/students", (request, response) => {
+  return response.status(200).json(students);
 });
 
 //To Add Students
-app.post("/students", (req, res) => {
-  const { nameOfStudent, age, responsibleTeacher, room } = req.body;
+app.post("/students", (request, response) => {
+  const { nameOfStudent, age, responsibleTeacher, room } = request.body;
 
   const addStudent = {
     id: uuid.v4(),
@@ -42,36 +42,36 @@ app.post("/students", (req, res) => {
 
   students.push(addStudent);
 
-  return res.status(201).json(addStudent);
+  return response.status(201).json(addStudent);
 });
 
 // To Update Student
-app.put("/students/:id", checkStudentId, (req, res) => {
-  const { id } = req.studentId;
-  const { index } = req.studentIndex;
-  const { nameOfStudent, age, responsibleTeacher, room } = req.body;
+app.put("/students/:id", checkStudentId, (request, response) => {
+  const { nameOfStudent, age, responsibleTeacher, room } = request.body;
+  const index = request.studentIndex;
+  const id = request.studentId;
 
   const updateStudent = { id, nameOfStudent, age, responsibleTeacher, room };
 
   students[index] = updateStudent;
 
-  return res.status(200).json(updateStudent);
+  return response.status(200).json(updateStudent);
 });
 
 //To Delete Student
-app.delete("/students/:id", checkStudentId, (req, res) => {
-  const { index } = req.studentIndex;
+app.delete("/students/:id", checkStudentId, (request, response) => {
+  const index = request.studentIndex;
 
   students.splice(index, 1);
 
-  return res.status(200).json(students);
+  return response.status(200).json(students);
 });
 
 //To Update A Part Of Itens
-app.patch("/students/:id", checkStudentId, (req, res) => {
-  const { id } = req.studentId;
-  const { index } = req.studentIndex;
-  const { nameOfStudent, age, responsibleTeacher, room } = req.body;
+app.patch("/students/:id", checkStudentId, (request, response) => {
+  const id = request.studentId;
+  const index = request.studentIndex;
+  const { nameOfStudent, age, responsibleTeacher, room } = request.body;
 
   const patchStudentUpdate = {
     id,
@@ -84,19 +84,15 @@ app.patch("/students/:id", checkStudentId, (req, res) => {
 
   students[index] = patchStudentUpdate;
 
-  return res.status(200).json(patchStudentUpdate);
+  return response.status(200).json(patchStudentUpdate);
 });
 
 //To List One Student
-app.get("/students/:id", (req, res) => {
-  const { id } = req.params;
-  const index = students.findIndex((student) => student.id === id);
+app.get("/students/:id", checkStudentId, (request, response) => {
+  const id = request.studentId;
+  const index = request.studentIndex;
 
-  if (index < 0) {
-    return res.status(404).json({ error: "User not found" });
-  }
-
-  return res.status(200).json(students[index]);
+  return response.status(200).json(students[index]);
 });
 
 app.listen(port, () => {
