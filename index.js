@@ -30,19 +30,25 @@ app.get("/students", (request, response) => {
 
 //To Add Students
 app.post("/students", (request, response) => {
-  const { nameOfStudent, age, responsibleTeacher, room } = request.body;
+  try {
+    const { nameOfStudent, age, responsibleTeacher, room } = request.body;
 
-  const addStudent = {
-    id: uuid.v4(),
-    nameOfStudent,
-    age,
-    responsibleTeacher,
-    room,
-  };
+    if (age === 27) throw new Error("Unexpected age");
 
-  students.push(addStudent);
+    const addStudent = {
+      id: uuid.v4(),
+      nameOfStudent,
+      age,
+      responsibleTeacher,
+      room,
+    };
 
-  return response.status(201).json(addStudent);
+    students.push(addStudent);
+
+    return response.status(201).json(addStudent);
+  } catch (err) {
+    return response.status(400).json({ error: err.message });
+  }
 });
 
 // To Update Student
