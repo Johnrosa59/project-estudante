@@ -1,8 +1,11 @@
 const express = require("express");
 const port = 4000;
 const uuid = require("uuid");
+const cors = require("cors")
 
 const app = express();
+
+app.use(cors())
 
 const students = [];
 
@@ -32,8 +35,6 @@ app.get("/students", (request, response) => {
 app.post("/students", (request, response) => {
   try {
     const { nameOfStudent, age, responsibleTeacher, room } = request.body;
-
-    if (age === 27) throw new Error("Unexpected age");
 
     const addStudent = {
       id: uuid.v4(),
