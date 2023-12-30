@@ -1,7 +1,7 @@
 const express = require("express");
-const port = 4000;
-const uuid = require("uuid");
+const uuid = require("uuid")
 const cors = require("cors")
+const port = process.env.PORT || 3000
 
 const app = express();
 
